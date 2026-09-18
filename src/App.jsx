@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import GameCanvas from "./components/GameCanvas.jsx";
 import Hud from "./components/Hud.jsx";
@@ -9,6 +9,7 @@ import {
   GameOverOverlay,
 } from "./components/Overlays.jsx";
 import { LIVES_MAX } from "./game/config.js";
+import FirstPage from "./components/FIrstPage.jsx";
 
 const INITIAL_HUD = {
   level: 1,
@@ -20,7 +21,11 @@ const INITIAL_HUD = {
 };
 
 function App() {
-  const [screen, setScreen] = useState("start"); // start | howto | playing | levelComplete | gameOver
+  const [screen, setScreen] = useState(() => {
+    const name = localStorage.getItem("name");
+
+    return name ? "start" : "firstpage";
+  });
   const [hud, setHud] = useState(INITIAL_HUD);
   const [combo, setCombo] = useState(null); // { text, color, key }
   const comboTimer = useRef(null);
@@ -78,9 +83,7 @@ function App() {
         onLevelComplete={handleLevelComplete}
         onGameOver={handleGameOver}
       />
-
       <Hud visible={screen === "playing"} {...hud} />
-
       {combo && (
         <div
           key={combo.key}
@@ -90,8 +93,18 @@ function App() {
           {combo.text}
         </div>
       )}
-
-      {screen === "start" && <StartOverlay onPlay={handlePlay} onHowTo={() => setScreen("howto")} />}
+      {screen === "start" && (
+        <StartOverlay
+          onPlay={handlePlay}
+          setScreen={setScreen}
+          onHowTo={() => setScreen("howto")}
+        />
+      )}
+      {screen === "firstpage" && (
+        <div style={{ position: "relative", zIndex: 9999 }}>
+          <FirstPage setScreen={setScreen} />
+        </div>
+      )}{" "}
       {screen === "howto" && <HowToOverlay onBack={() => setScreen("start")} />}
       {screen === "levelComplete" && (
         <LevelCompleteOverlay
@@ -102,6 +115,7 @@ function App() {
       )}
       {screen === "gameOver" && (
         <GameOverOverlay
+          setScreen={setScreen}
           score={hud.score}
           level={hud.level}
           bestCombo={hud.bestCombo}
