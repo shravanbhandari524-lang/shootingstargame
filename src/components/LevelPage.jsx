@@ -1,9 +1,18 @@
-// Home page shown after first launch: current level, play, rename, how-to.
-// Replaces the old StartOverlay (welcome text only makes sense on first play).
+// Home page: player name, level overview, play, all-levels layer, rename.
+import { LEVELS_COUNT } from "../game/config.js";
 
-export default function LevelPage({ onPlay, onChangeName, onHowTo }) {
+export default function LevelPage({
+  onPlay,
+  onChangeName,
+  onHowTo,
+  onLevels,
+  maxlevel = 1,
+}) {
   const name = localStorage.getItem("name") || "PLAYER";
-  const level = Math.max(1, parseInt(localStorage.getItem("currentlevel"), 10) || 1);
+  // Highest level the player has unlocked (beaten maxlevel-1, so maxlevel
+  // itself is the "next up" level — shown dimmed/ghost until completed).
+  const current = Math.min(Math.max(1, maxlevel), LEVELS_COUNT);
+  const completedCount = current - 1;
 
   return (
     <div className="overlay">
@@ -14,11 +23,16 @@ export default function LevelPage({ onPlay, onChangeName, onHowTo }) {
       <h1 className="title">
         LEVEL
         <br />
-        {level}
+        {current}
       </h1>
-      <div className="subtitle">CATCH THEM BEFORE THEY VANISH</div>
-      <button className="btn" onClick={onPlay}>
+      <div className="lp-progress">
+        {completedCount} / {LEVELS_COUNT} COMPLETED
+      </div>
+      <button className="btn" onClick={() => onPlay(current)}>
         PLAY
+      </button>
+      <button className="btn ghost" onClick={onLevels}>
+        LEVELS
       </button>
       <button className="btn ghost" onClick={onHowTo}>
         HOW TO PLAY

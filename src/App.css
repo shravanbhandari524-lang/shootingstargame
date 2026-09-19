@@ -180,6 +180,13 @@
   font-size: 14px;
   margin-bottom: 6px;
 }
+.lp-progress {
+  color: var(--dim);
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 11px;
+  margin: 4px 0 22px 0;
+}
 .subtitle {
   color: var(--dim);
   font-weight: 700;
@@ -374,6 +381,81 @@
   margin: 0;
   text-shadow: 0 0 30px rgba(255, 107, 207, 0.5);
 }
+/* ---- Level layer (all levels list) ---- */
+.level-layer .layer-title {
+  font-size: 9.5vw;
+  margin-bottom: 0;
+}
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  margin: 8px 0 28px 0;
+}
+.lv-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #3a2f66;
+  border-radius: 14px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    transform 0.12s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.lv-cell:active {
+  transform: scale(0.94);
+}
+.lv-num {
+  font-size: 20px;
+  line-height: 1;
+}
+.lv-tag {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
+
+/* Completed: gold + check */
+.lv-cell.done {
+  color: var(--gold);
+  border-color: rgba(255, 215, 107, 0.55);
+  background: rgba(255, 215, 107, 0.08);
+  box-shadow: 0 0 14px rgba(255, 215, 107, 0.15);
+}
+
+/* Next up / unlocked-but-not-completed: dimmed ghost look */
+.lv-cell.ghost {
+  opacity: 0.45;
+  border-style: dashed;
+}
+.lv-cell.ghost:hover {
+  opacity: 0.8;
+}
+
+/* Locked */
+.lv-cell.locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-style: solid;
+}
+.lv-cell.locked .lv-num {
+  filter: grayscale(1);
+}
+
 .lc-title {
   font-family: "Fredoka", sans-serif;
   font-weight: 600;

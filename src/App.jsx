@@ -7,12 +7,13 @@ import {
   LevelCompleteOverlay,
   GameOverOverlay,
 } from "./components/Overlays.jsx";
-import { LIVES_MAX } from "./game/config.js";
+import { LIVES_MAX, START_LEVEL } from "./game/config.js";
 import FirstPage from "./components/FIrstPage.jsx";
 import LevelPage from "./components/LevelPage.jsx";
+import LevelLayer from "./components/LevelLayer.jsx";
 
 const INITIAL_HUD = {
-  level: 1,
+  level: START_LEVEL,
   score: 0,
   lives: LIVES_MAX,
   levelHits: 0,
@@ -20,15 +21,44 @@ const INITIAL_HUD = {
   bestCombo: 0,
 };
 
+const LEVEL_KEY = "currentlevel";
+const MAXLEVEL_KEY = "maxlevel";
+
+function readLevel(key) {
+  try {
+    const n = parseInt(localStorage.getItem(key), 10);
+    return Number.isFinite(n) && n >= 1 ? n : START_LEVEL;
+  } catch {
+    return START_LEVEL;
+  }
+}
+
+// SECURITY: progress is the MAX ever reached. Replaying an older level can
+// never write a lower value, so picking level 1 again can't reset you to 1.
+function saveMaxLevel(level) {
+  try {
+    const prev = readLevel(MAXLEVEL_KEY);
+    if (level > prev) {
+      localStorage.setItem(MAXLEVEL_KEY, String(level));
+      localStorage.setItem(LEVEL_KEY, String(level));
+    }
+  } catch {
+    // storage blocked — progress just won't persist
+  }
+}
+
 // Screens:
 // - "playing"       in-game (Hud + canvas)
-// - "levelPage"     home page: current level, play, change name, how-to
+// - "levelPage"     home page: name, level overview, play
+// - "levelLayer"    full list of levels (opened from home page)
 // - "firstpage"     welcome/name page — first-timers only
 // - "howto" | "levelComplete" | "gameOver"
 //
-// Flow: brand-new players (nothing in localStorage) play level 1 directly.
-// If they lose on level 1 they land on the welcome page once; from then on
-// the level page is the home screen.
+// Flow:
+// - Brand-new players (nothing in localStorage) see the welcome page once,
+//   then play straight away. Losing for the first time lands them on the
+//   home page, which now also lists every level in the layer.
+// - Completing a level offers NEXT LEVEL or "go to home page".
 function App() {
   const [screen, setScreen] = useState(() =>
     localStorage.getItem("name") ? "levelPage" : "playing",
@@ -37,6 +67,9 @@ function App() {
   // "play" for first-timers, "home" when just renaming.
   const [afterName, setAfterName] = useState("play");
   const [hud, setHud] = useState(INITIAL_HUD);
+  // Exact level the player is in (TRY AGAIN must restart this same level,
+  // even if it's an older one they picked from the level layer).
+  const playedLevelRef = useRef(START_LEVEL);
   const [combo, setCombo] = useState(null); // { text, color, key }
   const comboTimer = useRef(null);
   const engineRef = useRef(null);
@@ -49,10 +82,17 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePlay = () => {
+  const handlePlay = (level) => {
     setHud(INITIAL_HUD);
     setScreen("playing");
-    engineRef.current?.start();
+    // Called with no arg from PLAY → use saved level; with a number → that level.
+    if (typeof level === "number") {
+      playedLevelRef.current = level;
+      engineRef.current?.startAt(level);
+    } else {
+      engineRef.current?.start();
+      playedLevelRef.current = engineRef.current?.getLevel?.() ?? START_LEVEL;
+    }
   };
 
   const handleNameSubmit = () => {
@@ -60,6 +100,7 @@ function App() {
       setHud(INITIAL_HUD);
       setScreen("playing");
       engineRef.current?.start();
+      playedLevelRef.current = engineRef.current?.getLevel?.() ?? START_LEVEL;
     } else {
       setScreen("levelPage");
     }
@@ -84,6 +125,9 @@ function App() {
   }, []);
 
   const handleLevelComplete = useCallback(() => {
+    // Persist progress with the max-guard (never lower than before).
+    const engine = engineRef.current;
+    if (engine?.getLevel) saveMaxLevel(engine.getLevel() + 1);
     setScreen("levelComplete");
   }, []);
 
@@ -93,13 +137,37 @@ function App() {
 
   const handleNextLevel = () => {
     engineRef.current?.nextLevel();
+    playedLevelRef.current = engineRef.current?.getLevel?.() ?? START_LEVEL;
     setScreen("playing");
   };
 
-  const handleRetry = () => {
+  // Offered after completing an older level: jump back to the normal
+  // progression level instead of stepping up from the replayed one.
+  const handleContinueFromComplete = () => {
+    const lv = Math.max(readLevel(MAXLEVEL_KEY), readLevel(LEVEL_KEY));
     setHud(INITIAL_HUD);
     setScreen("playing");
-    engineRef.current?.start();
+    playedLevelRef.current = lv;
+    engineRef.current?.startAt(lv);
+  };
+
+  // TRY AGAIN restarts the exact level that was just lost — never the saved
+  // "next" level.
+  const handleRetry = () => {
+    const lv = playedLevelRef.current;
+    setHud(INITIAL_HUD);
+    setScreen("playing");
+    engineRef.current?.startAt(lv);
+  };
+
+  // Offered when the lost level was an older one: jump back to the normal
+  // progression level.
+  const handleContinueNext = () => {
+    const lv = Math.max(readLevel(MAXLEVEL_KEY), readLevel(LEVEL_KEY));
+    setHud(INITIAL_HUD);
+    setScreen("playing");
+    playedLevelRef.current = lv;
+    engineRef.current?.startAt(lv);
   };
 
   const handleChangeName = () => {
@@ -140,9 +208,20 @@ function App() {
       )}
       {screen === "levelPage" && (
         <LevelPage
+          maxlevel={Math.max(readLevel(MAXLEVEL_KEY), readLevel(LEVEL_KEY))}
           onPlay={handlePlay}
           onChangeName={handleChangeName}
           onHowTo={() => setScreen("howto")}
+          onLevels={() => setScreen("levelLayer")}
+        />
+      )}
+      {screen === "levelLayer" && (
+        <LevelLayer
+          // Old saves only had "currentlevel" — treat it as the floor for
+          // maxlevel so upgrading never shrinks anyone's progress.
+          maxlevel={Math.max(readLevel(MAXLEVEL_KEY), readLevel(LEVEL_KEY))}
+          onSelect={handlePlay}
+          onClose={() => setScreen("levelPage")}
         />
       )}
       {screen === "firstpage" && (
@@ -157,7 +236,14 @@ function App() {
         <LevelCompleteOverlay
           score={hud.score}
           bestCombo={hud.bestCombo}
+          level={hud.level}
           onNext={handleNextLevel}
+          onContinue={handleContinueFromComplete}
+          continueLevel={Math.max(
+            readLevel(MAXLEVEL_KEY),
+            readLevel(LEVEL_KEY),
+          )}
+          onHome={handleHome}
         />
       )}
       {screen === "gameOver" && (
@@ -166,6 +252,11 @@ function App() {
           level={hud.level}
           bestCombo={hud.bestCombo}
           onRetry={handleRetry}
+          onContinue={handleContinueNext}
+          continueLevel={Math.max(
+            readLevel(MAXLEVEL_KEY),
+            readLevel(LEVEL_KEY),
+          )}
           onHome={handleHome}
         />
       )}

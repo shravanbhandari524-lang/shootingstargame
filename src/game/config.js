@@ -9,6 +9,10 @@ export const START_LEVEL = 1;
 export const LEVEL_TARGET_BASE = 5;
 export const LEVEL_TARGET_STEP = 2;
 
+// Number of levels offered on the level layer. Bump to add more;
+// difficultyFor/levelTargetFor already scale with the level number.
+export const LEVELS_COUNT = 20;
+
 // Pre-computed color variants used for sprite baking & gradients.
 export const STAR_COLORS_RGB = STAR_COLORS.map((c) => hexToRgb(c));
 

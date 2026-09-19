@@ -42,7 +42,15 @@ export function HowToOverlay({ onBack }) {
   );
 }
 
-export function LevelCompleteOverlay({ score, bestCombo, onNext }) {
+export function LevelCompleteOverlay({
+  score,
+  bestCombo,
+  onNext,
+  onContinue,
+  continueLevel,
+  level,
+  onHome,
+}) {
   return (
     <div className="overlay">
       <h1 className="lc-title">
@@ -63,11 +71,29 @@ export function LevelCompleteOverlay({ score, bestCombo, onNext }) {
       <button className="btn" onClick={onNext}>
         NEXT LEVEL
       </button>
+      {/* Offered when an older level was completed: jump back to the normal
+          progression. Hidden when it would be identical to NEXT LEVEL. */}
+      {continueLevel && continueLevel !== level + 1 && (
+        <button className="btn ghost" onClick={onContinue}>
+          continue · level {continueLevel}
+        </button>
+      )}
+      <button className="btn ghost" onClick={onHome}>
+        go to home page
+      </button>
     </div>
   );
 }
 
-export function GameOverOverlay({ score, level, bestCombo, onRetry, onHome }) {
+export function GameOverOverlay({
+  score,
+  level,
+  bestCombo,
+  onRetry,
+  onContinue,
+  continueLevel,
+  onHome,
+}) {
   return (
     <div className="overlay">
       <h1 className="go-title">SKY WENT DARK</h1>
@@ -88,6 +114,11 @@ export function GameOverOverlay({ score, level, bestCombo, onRetry, onHome }) {
       <button className="btn" onClick={onRetry}>
         TRY AGAIN
       </button>
+      {continueLevel && continueLevel !== level && (
+        <button className="btn ghost" onClick={onContinue}>
+          continue · level {continueLevel}
+        </button>
+      )}
       <button className="btn ghost" onClick={onHome}>
         go to home page
       </button>

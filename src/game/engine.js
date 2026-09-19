@@ -11,6 +11,7 @@ import {
   STAR_COLORS,
   LIVES_MAX,
   TRAIL_LENGTH,
+  START_LEVEL,
   levelTargetFor,
   difficultyFor,
 } from "./config.js";
@@ -92,16 +93,14 @@ export function createEngine(canvas, callbacks) {
   let shake = 0;
   let flashAlpha = 0;
 
-  const startLevel = loadLevel();
-
   const game = {
-    level: startLevel,
+    level: START_LEVEL,
     score: 0,
     lives: LIVES_MAX,
     combo: 0,
     bestCombo: 0,
     levelHits: 0,
-    levelTarget: levelTargetFor(startLevel),
+    levelTarget: levelTargetFor(START_LEVEL),
   };
   const LEVEL_KEY = "currentlevel";
 
@@ -254,7 +253,7 @@ export function createEngine(canvas, callbacks) {
 
     if (game.levelHits >= game.levelTarget) {
       running = false;
-      saveLevel(game.level + 1); // next level to play, saved immediately
+      // Progress is persisted by App (with a max-guard), not here.
       clearStars();
       setTimeout(() => callbacks.onLevelComplete(), 350);
     }
@@ -440,8 +439,8 @@ export function createEngine(canvas, callbacks) {
   // ---------------------------------------------------------------
   // PUBLIC API
   // ---------------------------------------------------------------
-  function start() {
-    game.level = loadLevel();
+  function start(level) {
+    game.level = Number.isFinite(level) && level >= 1 ? level : loadLevel();
     game.score = 0;
     game.lives = LIVES_MAX;
     game.combo = 0;
@@ -511,5 +510,19 @@ export function createEngine(canvas, callbacks) {
     game.level = 1;
   }
 
-  return { mount, start, nextLevel, tapAt, destroy, resetProgress };
+  // Explicitly play a chosen level (from the level layer). `start` above
+  // falls back to the saved level when called without arguments.
+  const startAt = (level) => start(level);
+  const getLevel = () => game.level;
+
+  return {
+    mount,
+    start,
+    startAt,
+    getLevel,
+    nextLevel,
+    tapAt,
+    destroy,
+    resetProgress,
+  };
 }
