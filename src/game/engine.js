@@ -40,9 +40,19 @@ export function createEngine(canvas, callbacks) {
   const stars = new Array(MAX_STARS);
   for (let i = 0; i < MAX_STARS; i++) {
     stars[i] = {
-      active: false, x: 0, y: 0, vx: 0, vy: 0,
-      size: 0, colorIndex: 0, spin: 0, spinSpeed: 0,
-      born: 0, trail: null, trailLen: 0, trailHead: 0,
+      active: false,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      size: 0,
+      colorIndex: 0,
+      spin: 0,
+      spinSpeed: 0,
+      born: 0,
+      trail: null,
+      trailLen: 0,
+      trailHead: 0,
     };
   }
   let starCount = 0;
@@ -50,9 +60,19 @@ export function createEngine(canvas, callbacks) {
   const particles = new Array(MAX_PARTICLES);
   for (let i = 0; i < MAX_PARTICLES; i++) {
     particles[i] = {
-      active: false, x: 0, y: 0, vx: 0, vy: 0, life: 0,
-      colorIndex: 0, star: false, size: 0, spin: 0,
-      ring: false, r: 0, maxR: 0,
+      active: false,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      life: 0,
+      colorIndex: 0,
+      star: false,
+      size: 0,
+      spin: 0,
+      ring: false,
+      r: 0,
+      maxR: 0,
     };
   }
   let particleCount = 0;
@@ -112,22 +132,27 @@ export function createEngine(canvas, callbacks) {
     let x, y, angle;
 
     if (side === 0) {
-      x = -margin; y = Math.random() * H * 0.7;
+      x = -margin;
+      y = Math.random() * H * 0.7;
       angle = -0.35 + Math.random() * 0.7;
     } else if (side === 1) {
-      x = W + margin; y = Math.random() * H * 0.7;
+      x = W + margin;
+      y = Math.random() * H * 0.7;
       angle = Math.PI - (-0.35 + Math.random() * 0.7);
     } else if (side === 2) {
-      x = Math.random() * W; y = -margin;
+      x = Math.random() * W;
+      y = -margin;
       angle = Math.PI / 2 + (-0.4 + Math.random() * 0.8);
     } else {
-      x = Math.random() * W * 0.6 + W * 0.2; y = -margin;
+      x = Math.random() * W * 0.6 + W * 0.2;
+      y = -margin;
       angle = Math.PI / 2.2;
     }
 
     const speed = diff.speed * (0.85 + Math.random() * 0.3);
     s.active = true;
-    s.x = x; s.y = y;
+    s.x = x;
+    s.y = y;
     s.vx = Math.cos(angle) * speed;
     s.vy = Math.sin(angle) * speed + 1.4;
     s.size = diff.size;
@@ -146,8 +171,10 @@ export function createEngine(canvas, callbacks) {
       const s = (big ? 3 : 1.8) + Math.random() * (big ? 7 : 4.5);
       const p = particles[particleCount++];
       p.active = true;
-      p.x = x; p.y = y;
-      p.vx = Math.cos(a) * s; p.vy = Math.sin(a) * s;
+      p.x = x;
+      p.y = y;
+      p.vx = Math.cos(a) * s;
+      p.vy = Math.sin(a) * s;
       p.life = 1;
       p.colorIndex = colorIndex;
       p.star = Math.random() < 0.5;
@@ -158,8 +185,10 @@ export function createEngine(canvas, callbacks) {
     if (particleCount < MAX_PARTICLES) {
       const p = particles[particleCount++];
       p.active = true;
-      p.x = x; p.y = y;
-      p.ring = true; p.r = 4;
+      p.x = x;
+      p.y = y;
+      p.ring = true;
+      p.r = 4;
       p.maxR = big ? 90 : 60;
       p.life = 1;
       p.colorIndex = colorIndex;
@@ -206,6 +235,7 @@ export function createEngine(canvas, callbacks) {
 
     if (game.levelHits >= game.levelTarget) {
       running = false;
+      clearStars(); // <-- add
       setTimeout(() => callbacks.onLevelComplete(), 350);
     }
   }
@@ -215,12 +245,12 @@ export function createEngine(canvas, callbacks) {
     game.combo = 0;
     game.lives--;
     callbacks.onState(game);
-    audio.missSfx();
+    if (game.lives > 0) audio.missSfx();
     shake = 8;
     audio.vibrate([12, 30, 12]);
-
     if (game.lives <= 0) {
       running = false;
+      clearStars(); // <-- add
       audio.gameOverSfx();
       setTimeout(() => callbacks.onGameOver(), 250);
     }
@@ -236,15 +266,26 @@ export function createEngine(canvas, callbacks) {
     ctx.save();
     ctx.translate(s.x, s.y);
     ctx.rotate(s.spin * 0.6);
-    ctx.scale(Math.max(0.15, Math.abs(Math.cos(s.spin))) * (Math.cos(s.spin) < 0 ? -1 : 1), 1);
-    ctx.drawImage(sprite, -w * scale / 2, -w * scale / 2, w * scale, w * scale);
+    ctx.scale(
+      Math.max(0.15, Math.abs(Math.cos(s.spin))) *
+        (Math.cos(s.spin) < 0 ? -1 : 1),
+      1,
+    );
+    ctx.drawImage(
+      sprite,
+      (-w * scale) / 2,
+      (-w * scale) / 2,
+      w * scale,
+      w * scale,
+    );
     ctx.restore();
   }
 
   function drawScene(t) {
     ctx.clearRect(0, 0, W, H);
 
-    let sx = 0, sy = 0;
+    let sx = 0,
+      sy = 0;
     if (shake > 0) {
       sx = (Math.random() - 0.5) * shake;
       sy = (Math.random() - 0.5) * shake;
@@ -275,7 +316,13 @@ export function createEngine(canvas, callbacks) {
         const r = (1 + a * s.size * 0.55) * 2;
         ctx.globalAlpha = a * 0.6;
         const glow = getGlowSprite(s.trail[idx * 3 + 2]);
-        ctx.drawImage(glow, s.trail[idx * 3] - r, s.trail[idx * 3 + 1] - r, r * 2, r * 2);
+        ctx.drawImage(
+          glow,
+          s.trail[idx * 3] - r,
+          s.trail[idx * 3 + 1] - r,
+          r * 2,
+          r * 2,
+        );
       }
       ctx.globalAlpha = 1;
 
@@ -286,9 +333,9 @@ export function createEngine(canvas, callbacks) {
       s.x += s.vx;
       s.y += s.vy;
 
-      if (s.x < -60 || s.x > W + 60 || s.y > H + 60) {
+      if (running && (s.x < -60 || s.x > W + 60 || s.y > H + 60)) {
         handleMiss(i);
-        i--; // swapped element needs re-processing
+        i--;
       }
     }
 
@@ -318,8 +365,10 @@ export function createEngine(canvas, callbacks) {
         } else {
           ctx.drawImage(sprite, p.x - d / 2, p.y - d / 2, d, d);
         }
-        p.x += p.vx; p.y += p.vy;
-        p.vx *= 0.96; p.vy *= 0.96;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.96;
+        p.vy *= 0.96;
         p.vy += 0.05;
         p.life -= 0.032;
       }
@@ -370,7 +419,7 @@ export function createEngine(canvas, callbacks) {
   // PUBLIC API
   // ---------------------------------------------------------------
   function start() {
-    game.level = 1;
+    game.level = 100;
     game.score = 0;
     game.lives = LIVES_MAX;
     game.combo = 0;
@@ -399,7 +448,12 @@ export function createEngine(canvas, callbacks) {
     running = true;
     callbacks.onState(game);
   }
-
+  function clearStars() {
+    for (let i = 0; i < starCount; i++) {
+      spawnBurst(stars[i].x, stars[i].y, stars[i].colorIndex, false); // optional: pop them
+    }
+    starCount = 0;
+  }
   function tapAt(x, y) {
     if (!running) return;
     audio.resume();
