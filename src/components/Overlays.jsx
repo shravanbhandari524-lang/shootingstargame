@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export function StartOverlay({ onPlay, onHowTo, setScreen }) {
   const [name] = useState(() => localStorage.getItem("name") || "");
-  function handleNamechange() {
+  function handleNameChange() {
     localStorage.removeItem("name");
     setScreen("firstpage");
   }
@@ -15,22 +15,29 @@ export function StartOverlay({ onPlay, onHowTo, setScreen }) {
         <div className="brand-star">🌠</div>
       </div>
       <h1 className="title">
-        Welcome : {name}
-        <br />
         SHOOTING
         <br />
         STAR BURST
       </h1>
-      <div className="subtitle">CATCH THEM BEFORE THEY VANISH</div>
-      <button className="btn" onClick={onPlay}>
-        PLAY
-      </button>
-      <button className="btn ghost" onClick={handleNamechange}>
-        chagne name
-      </button>
-      <button className="btn ghost" onClick={onHowTo}>
-        HOW TO PLAY
-      </button>
+      <div className="subtitle">
+        CATCH THEM BEFORE THEY VANISH
+        {name ? (
+          <span className="subtitle-name">
+            — WELCOME BACK, <b>{name.toUpperCase()}</b>
+          </span>
+        ) : null}
+      </div>
+      <div className="btn-stack">
+        <button className="btn" onClick={onPlay}>
+          PLAY
+        </button>
+        <button className="btn ghost" onClick={onHowTo}>
+          HOW TO PLAY
+        </button>
+        <button className="btn ghost" onClick={handleNameChange}>
+          CHANGE NAME
+        </button>
+      </div>
     </div>
   );
 }
@@ -38,27 +45,37 @@ export function StartOverlay({ onPlay, onHowTo, setScreen }) {
 export function HowToOverlay({ onBack }) {
   return (
     <div className="overlay">
-      <h1 className="title" style={{ fontSize: "9.5vw" }}>
-        HOW TO PLAY
+      <h1 className="title howto-title">
+        HOW
+        <br />
+        TO PLAY
       </h1>
-      <div
-        style={{
-          maxWidth: "320px",
-          color: "var(--cream)",
-          fontSize: "16px",
-          lineHeight: "1.65",
-          margin: "18px 0",
-          fontWeight: 600,
-        }}
-      >
-        Stars streak across the sky and vanish fast.
-        <br />
-        <br />
-        Tap a star to burst it before it escapes. Chain hits for combo bonuses.
-        <br />
-        <br />
-        Hit the level's target count before you run out of misses. Every level
-        gets faster.
+      <div className="howto-steps">
+        <div className="howto-step">
+          <div className="step-num">1</div>
+          <div className="step-text">
+            Stars streak across the sky and vanish fast.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">2</div>
+          <div className="step-text">
+            Tap a star to burst it before it escapes.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">3</div>
+          <div className="step-text">
+            Chain hits for combo bonuses &amp; PERFECT hits.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">4</div>
+          <div className="step-text">
+            Reach the level target before you run out of lives. Every level
+            gets faster!
+          </div>
+        </div>
       </div>
       <button className="btn" onClick={onBack}>
         GOT IT
@@ -99,7 +116,7 @@ export function GameOverOverlay({
   onRetry,
   setScreen,
 }) {
-  function handleGotohomepage() {
+  function handleGoHome() {
     setScreen("start");
   }
   return (
@@ -119,12 +136,14 @@ export function GameOverOverlay({
           <div className="l">BEST COMBO</div>
         </div>
       </div>
-      <button className="btn" onClick={onRetry}>
-        TRY AGAIN
-      </button>
-      <button className="btn ghost" onClick={handleGotohomepage}>
-        got to home page{" "}
-      </button>
+      <div className="btn-stack">
+        <button className="btn" onClick={onRetry}>
+          TRY AGAIN
+        </button>
+        <button className="btn ghost" onClick={handleGoHome}>
+          HOME
+        </button>
+      </div>
     </div>
   );
 }

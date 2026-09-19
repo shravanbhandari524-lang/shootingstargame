@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import GameCanvas from "./components/GameCanvas.jsx";
 import Hud from "./components/Hud.jsx";
@@ -100,11 +100,7 @@ function App() {
           onHowTo={() => setScreen("howto")}
         />
       )}
-      {screen === "firstpage" && (
-        <div style={{ position: "relative", zIndex: 9999 }}>
-          <FirstPage setScreen={setScreen} />
-        </div>
-      )}{" "}
+      {screen === "firstpage" && <FirstPage setScreen={setScreen} />}
       {screen === "howto" && <HowToOverlay onBack={() => setScreen("start")} />}
       {screen === "levelComplete" && (
         <LevelCompleteOverlay
