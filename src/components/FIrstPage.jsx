@@ -1,13 +1,15 @@
 import { useState } from "react";
 
-export default function FirstPage({ setScreen }) {
+// Welcome/name page. Where it sends the player after submitting is decided
+// by App (first-timers go straight into the game, renames go home).
+export default function FirstPage({ onSubmit }) {
   const [name, setName] = useState("");
 
   const handleSubmit = () => {
     if (!name.trim()) return;
 
     localStorage.setItem("name", name.trim());
-    setScreen("start");
+    onSubmit?.();
   };
 
   return (

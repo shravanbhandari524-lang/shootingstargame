@@ -1,40 +1,5 @@
 // All overlay screens. Visibility driven by React props — no DOM classList.
 
-import { useState } from "react";
-
-export function StartOverlay({ onPlay, onHowTo, setScreen }) {
-  const [name] = useState(() => localStorage.getItem("name") || "");
-  function handleNamechange() {
-    localStorage.removeItem("name");
-    setScreen("firstpage");
-  }
-
-  return (
-    <div className="overlay">
-      <div className="brand">
-        <div className="brand-star">🌠</div>
-      </div>
-      <h1 className="title">
-        Welcome : {name}
-        <br />
-        SHOOTING
-        <br />
-        STAR BURST
-      </h1>
-      <div className="subtitle">CATCH THEM BEFORE THEY VANISH</div>
-      <button className="btn" onClick={onPlay}>
-        PLAY
-      </button>
-      <button className="btn ghost" onClick={handleNamechange}>
-        chagne name
-      </button>
-      <button className="btn ghost" onClick={onHowTo}>
-        HOW TO PLAY
-      </button>
-    </div>
-  );
-}
-
 export function HowToOverlay({ onBack }) {
   return (
     <div className="overlay">
@@ -97,11 +62,8 @@ export function GameOverOverlay({
   level,
   bestCombo,
   onRetry,
-  setScreen,
+  onHome,
 }) {
-  function handleGotohomepage() {
-    setScreen("start");
-  }
   return (
     <div className="overlay">
       <h1 className="go-title">SKY WENT DARK</h1>
@@ -122,8 +84,8 @@ export function GameOverOverlay({
       <button className="btn" onClick={onRetry}>
         TRY AGAIN
       </button>
-      <button className="btn ghost" onClick={handleGotohomepage}>
-        got to home page{" "}
+      <button className="btn ghost" onClick={onHome}>
+        go to home page
       </button>
     </div>
   );

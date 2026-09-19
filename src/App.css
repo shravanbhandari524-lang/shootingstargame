@@ -126,6 +126,13 @@
   text-shadow: 0 0 40px rgba(255, 215, 107, 0.35);
   letter-spacing: 1px;
 }
+.lp-name {
+  color: var(--cream);
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
 .subtitle {
   color: var(--dim);
   font-weight: 700;

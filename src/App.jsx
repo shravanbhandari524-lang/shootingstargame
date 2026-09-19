@@ -3,13 +3,13 @@ import "./App.css";
 import GameCanvas from "./components/GameCanvas.jsx";
 import Hud from "./components/Hud.jsx";
 import {
-  StartOverlay,
   HowToOverlay,
   LevelCompleteOverlay,
   GameOverOverlay,
 } from "./components/Overlays.jsx";
 import { LIVES_MAX } from "./game/config.js";
 import FirstPage from "./components/FIrstPage.jsx";
+import LevelPage from "./components/LevelPage.jsx";
 
 const INITIAL_HUD = {
   level: 1,
@@ -20,21 +20,49 @@ const INITIAL_HUD = {
   bestCombo: 0,
 };
 
+// Screens:
+// - "playing"       in-game (Hud + canvas)
+// - "levelPage"     home page: current level, play, change name, how-to
+// - "firstpage"     welcome/name page — first-timers only
+// - "howto" | "levelComplete" | "gameOver"
+//
+// Flow: brand-new players (nothing in localStorage) play level 1 directly.
+// If they lose on level 1 they land on the welcome page once; from then on
+// the level page is the home screen.
 function App() {
-  const [screen, setScreen] = useState(() => {
-    const name = localStorage.getItem("name");
-
-    return name ? "start" : "firstpage";
-  });
+  const [screen, setScreen] = useState(() =>
+    localStorage.getItem("name") ? "levelPage" : "playing",
+  );
+  // Where the name page sends the player after submitting:
+  // "play" for first-timers, "home" when just renaming.
+  const [afterName, setAfterName] = useState("play");
   const [hud, setHud] = useState(INITIAL_HUD);
   const [combo, setCombo] = useState(null); // { text, color, key }
   const comboTimer = useRef(null);
   const engineRef = useRef(null);
 
+  // First-time players start the game immediately on mount.
+  useEffect(() => {
+    if (screen === "playing" && !localStorage.getItem("name")) {
+      engineRef.current?.start();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handlePlay = () => {
     setHud(INITIAL_HUD);
     setScreen("playing");
     engineRef.current?.start();
+  };
+
+  const handleNameSubmit = () => {
+    if (afterName === "play") {
+      setHud(INITIAL_HUD);
+      setScreen("playing");
+      engineRef.current?.start();
+    } else {
+      setScreen("levelPage");
+    }
   };
 
   const handleState = useCallback((g) => {
@@ -74,6 +102,23 @@ function App() {
     engineRef.current?.start();
   };
 
+  const handleChangeName = () => {
+    setAfterName("home");
+    localStorage.removeItem("name");
+    setScreen("firstpage");
+  };
+
+  // "Home" after a loss: first-timers (who played before naming themselves)
+  // see the welcome page once; everyone else goes to the level page.
+  const handleHome = () => {
+    if (localStorage.getItem("name")) {
+      setScreen("levelPage");
+    } else {
+      setAfterName("play");
+      setScreen("firstpage");
+    }
+  };
+
   return (
     <div id="stage">
       <GameCanvas
@@ -93,19 +138,21 @@ function App() {
           {combo.text}
         </div>
       )}
-      {screen === "start" && (
-        <StartOverlay
+      {screen === "levelPage" && (
+        <LevelPage
           onPlay={handlePlay}
-          setScreen={setScreen}
+          onChangeName={handleChangeName}
           onHowTo={() => setScreen("howto")}
         />
       )}
       {screen === "firstpage" && (
         <div style={{ position: "relative", zIndex: 9999 }}>
-          <FirstPage setScreen={setScreen} />
+          <FirstPage onSubmit={handleNameSubmit} />
         </div>
-      )}{" "}
-      {screen === "howto" && <HowToOverlay onBack={() => setScreen("start")} />}
+      )}
+      {screen === "howto" && (
+        <HowToOverlay onBack={() => setScreen("levelPage")} />
+      )}
       {screen === "levelComplete" && (
         <LevelCompleteOverlay
           score={hud.score}
@@ -115,11 +162,11 @@ function App() {
       )}
       {screen === "gameOver" && (
         <GameOverOverlay
-          setScreen={setScreen}
           score={hud.score}
           level={hud.level}
           bestCombo={hud.bestCombo}
           onRetry={handleRetry}
+          onHome={handleHome}
         />
       )}
     </div>
