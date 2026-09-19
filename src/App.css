@@ -97,7 +97,54 @@
   justify-content: center;
   text-align: center;
   padding: 24px;
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
   background: radial-gradient(ellipse at 50% 20%, #241452 0%, #05040f 75%);
+  animation: overlay-in 0.35s ease-out both;
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Staggered content entrance inside overlays */
+.overlay > * {
+  animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.overlay > *:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.overlay > *:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.overlay > *:nth-child(4) {
+  animation-delay: 0.18s;
+}
+.overlay > *:nth-child(5) {
+  animation-delay: 0.24s;
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlay > * {
+    animation: none;
+  }
 }
 .overlay.hidden {
   display: none;
@@ -139,6 +186,17 @@
   letter-spacing: 3px;
   font-size: 12px;
   margin: 10px 0 32px 0;
+  max-width: 320px;
+}
+.subtitle-name {
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  font-size: 11px;
+}
+.subtitle-name b {
+  color: var(--cream);
 }
 .btn {
   font-family: "Fredoka", sans-serif;
@@ -150,6 +208,12 @@
   border: none;
   border-radius: 16px;
   padding: 16px 46px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.15s ease;
   box-shadow:
     0 0 0 3px rgba(255, 215, 107, 0.15),
     0 6px 0 var(--gold-dk),
@@ -157,7 +221,15 @@
 }
 .btn:active {
   transform: translateY(4px);
-  box-shadow: 0 2px 0 var(--gold-dk);
+  box-shadow:
+    0 0 0 3px rgba(255, 215, 107, 0.1),
+    0 2px 0 var(--gold-dk),
+    0 6px 14px rgba(255, 215, 107, 0.2);
+}
+.btn:disabled {
+  filter: grayscale(0.5) brightness(0.7);
+  cursor: not-allowed;
+  transform: none;
 }
 .btn.ghost {
   background: transparent;
@@ -166,7 +238,116 @@
   border: 2px solid #3a2f66;
   font-size: 14px;
   padding: 10px 26px;
-  margin-top: 16px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.12s ease;
+}
+.btn.ghost:active {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--lav);
+  transform: scale(0.97);
+}
+.btn-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+.btn-stack .btn {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.btn-stack .btn.ghost {
+  margin-top: 12px;
+}
+
+/* ---- First page (name entry) ---- */
+.first-page .first-title {
+  font-size: 11.5vw;
+}
+.name-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 300px;
+}
+.name-input {
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 16px; /* 16px prevents iOS zoom-on-focus */
+  color: var(--cream);
+  text-align: center;
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid #3a2f66;
+  border-radius: 14px;
+  padding: 14px 18px;
+  outline: none;
+  caret-color: var(--gold);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.name-input::placeholder {
+  color: var(--dim);
+  font-weight: 500;
+}
+.name-input:focus {
+  border-color: var(--gold);
+  background: rgba(255, 215, 107, 0.07);
+  box-shadow: 0 0 0 4px rgba(255, 215, 107, 0.15);
+}
+
+/* ---- How to play steps ---- */
+.howto-title {
+  font-size: 9.5vw;
+  margin-bottom: 8px;
+}
+.howto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 330px;
+  margin: 14px 0 30px 0;
+}
+.howto-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.step-num {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink);
+  background: linear-gradient(180deg, #ffe9a8, var(--gold));
+  border-radius: 50%;
+  box-shadow: 0 3px 0 var(--gold-dk);
+}
+.step-text {
+  color: var(--cream);
+  font-size: 13.5px;
+  line-height: 1.5;
+  font-weight: 600;
 }
 .stat-row {
   display: flex;

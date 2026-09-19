@@ -3,27 +3,37 @@
 export function HowToOverlay({ onBack }) {
   return (
     <div className="overlay">
-      <h1 className="title" style={{ fontSize: "9.5vw" }}>
-        HOW TO PLAY
+      <h1 className="title howto-title">
+        HOW
+        <br />
+        TO PLAY
       </h1>
-      <div
-        style={{
-          maxWidth: "320px",
-          color: "var(--cream)",
-          fontSize: "16px",
-          lineHeight: "1.65",
-          margin: "18px 0",
-          fontWeight: 600,
-        }}
-      >
-        Stars streak across the sky and vanish fast.
-        <br />
-        <br />
-        Tap a star to burst it before it escapes. Chain hits for combo bonuses.
-        <br />
-        <br />
-        Hit the level's target count before you run out of misses. Every level
-        gets faster.
+      <div className="howto-steps">
+        <div className="howto-step">
+          <div className="step-num">1</div>
+          <div className="step-text">
+            Stars streak across the sky and vanish fast.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">2</div>
+          <div className="step-text">
+            Tap a star to burst it before it escapes.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">3</div>
+          <div className="step-text">
+            Chain hits for combo bonuses &amp; PERFECT hits.
+          </div>
+        </div>
+        <div className="howto-step">
+          <div className="step-num">4</div>
+          <div className="step-text">
+            Reach the level target before you run out of lives. Every level gets
+            faster!
+          </div>
+        </div>
       </div>
       <button className="btn" onClick={onBack}>
         GOT IT
@@ -57,13 +67,7 @@ export function LevelCompleteOverlay({ score, bestCombo, onNext }) {
   );
 }
 
-export function GameOverOverlay({
-  score,
-  level,
-  bestCombo,
-  onRetry,
-  onHome,
-}) {
+export function GameOverOverlay({ score, level, bestCombo, onRetry, onHome }) {
   return (
     <div className="overlay">
       <h1 className="go-title">SKY WENT DARK</h1>

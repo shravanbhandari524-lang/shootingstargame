@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import GameCanvas from "./components/GameCanvas.jsx";
 import Hud from "./components/Hud.jsx";

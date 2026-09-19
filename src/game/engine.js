@@ -117,7 +117,9 @@ export function createEngine(canvas, callbacks) {
   function saveLevel(level) {
     try {
       localStorage.setItem(LEVEL_KEY, String(level));
-    } catch {}
+    } catch {
+      // storage blocked (private mode, etc.) — level just won't persist
+    }
   }
   // ---------------------------------------------------------------
   // RESIZE (ResizeObserver — no window listener needed)
