@@ -92,16 +92,33 @@ export function createEngine(canvas, callbacks) {
   let shake = 0;
   let flashAlpha = 0;
 
+  const startLevel = loadLevel();
+
   const game = {
-    level: 1,
+    level: startLevel,
     score: 0,
     lives: LIVES_MAX,
     combo: 0,
     bestCombo: 0,
     levelHits: 0,
-    levelTarget: levelTargetFor(1),
+    levelTarget: levelTargetFor(startLevel),
   };
+  const LEVEL_KEY = "currentlevel";
 
+  function loadLevel() {
+    try {
+      const n = parseInt(localStorage.getItem(LEVEL_KEY), 10);
+      return Number.isFinite(n) && n >= 1 ? n : 1;
+    } catch {
+      return 1; // storage blocked (private mode, etc.)
+    }
+  }
+
+  function saveLevel(level) {
+    try {
+      localStorage.setItem(LEVEL_KEY, String(level));
+    } catch {}
+  }
   // ---------------------------------------------------------------
   // RESIZE (ResizeObserver — no window listener needed)
   // ---------------------------------------------------------------
@@ -235,7 +252,8 @@ export function createEngine(canvas, callbacks) {
 
     if (game.levelHits >= game.levelTarget) {
       running = false;
-      clearStars(); // <-- add
+      saveLevel(game.level + 1); // next level to play, saved immediately
+      clearStars();
       setTimeout(() => callbacks.onLevelComplete(), 350);
     }
   }
@@ -245,17 +263,19 @@ export function createEngine(canvas, callbacks) {
     game.combo = 0;
     game.lives--;
     callbacks.onState(game);
-    if (game.lives > 0) audio.missSfx();
     shake = 8;
-    audio.vibrate([12, 30, 12]);
+
     if (game.lives <= 0) {
       running = false;
-      clearStars(); // <-- add
+      clearStars();
       audio.gameOverSfx();
+      audio.vibrate([40, 60, 40]);
       setTimeout(() => callbacks.onGameOver(), 250);
+    } else {
+      audio.missSfx();
+      audio.vibrate([12, 30, 12]);
     }
   }
-
   // ---------------------------------------------------------------
   // DRAW — everything is drawImage of pre-baked sprites.
   // ---------------------------------------------------------------
@@ -419,13 +439,13 @@ export function createEngine(canvas, callbacks) {
   // PUBLIC API
   // ---------------------------------------------------------------
   function start() {
-    game.level = 100;
+    game.level = loadLevel();
     game.score = 0;
     game.lives = LIVES_MAX;
     game.combo = 0;
     game.bestCombo = 0;
     game.levelHits = 0;
-    game.levelTarget = levelTargetFor(1);
+    game.levelTarget = levelTargetFor(game.level); // was levelTargetFor(1)
     starCount = 0;
     particleCount = 0;
     spawnTimer = 0;
@@ -484,6 +504,10 @@ export function createEngine(canvas, callbacks) {
     if (rafId) cancelAnimationFrame(rafId);
     ro.disconnect();
   }
+  function resetProgress() {
+    saveLevel(1);
+    game.level = 1;
+  }
 
-  return { mount, start, nextLevel, tapAt, destroy };
+  return { mount, start, nextLevel, tapAt, destroy, resetProgress };
 }
