@@ -67,6 +67,68 @@
   line-height: 1;
 }
 
+/* ---- In-game pause (settings) button — top-left, below the lives ---- */
+.pause-btn {
+  position: absolute;
+  top: calc(max(14px, env(safe-area-inset-top)) + 34px);
+  left: 14px;
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  border-radius: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  touch-action: manipulation;
+  transition:
+    transform 0.12s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+.pause-btn:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--lav);
+}
+
+/* ---- Pause overlay ---- */
+.pause-overlay {
+  /* Dim the frozen game instead of hiding it — feels like a true pause */
+  background: rgba(5, 4, 15, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.pause-title {
+  font-size: 14vw;
+}
+.pause-count {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: 34vw;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 60px rgba(255, 215, 107, 0.55);
+  animation: count-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes count-pop {
+  0% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+}
+
 .combo-msg {
   position: absolute;
   top: 24%;
@@ -293,6 +355,87 @@
 /* 4+ ghost buttons need tighter rhythm so stacks don't get too tall */
 .btn-stack .btn.ghost + .btn.ghost {
   margin-top: 8px;
+}
+
+/* ---- Home page redesign ---- */
+.home-page {
+  justify-content: center;
+  gap: 0;
+}
+.home-logo {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 2px;
+}
+.home-level-card {
+  width: 100%;
+  max-width: 300px;
+  margin: 14px 0 22px 0;
+  padding: 16px 18px 14px 18px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+}
+.home-level-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  color: var(--dim);
+}
+.home-level-num {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: 54px;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #fff7e8 10%, #ffd76b 60%, #c99a2e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px rgba(255, 215, 107, 0.25));
+}
+.home-track {
+  height: 8px;
+  margin: 10px 0 8px 0;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+.home-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--gold), var(--mint));
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+}
+.home-half {
+  flex: 1;
+  margin-top: 0 !important;
+  padding: 12px 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.link-btn {
+  margin-top: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  touch-action: manipulation;
+  transition: color 0.2s ease;
+}
+.link-btn:active {
+  color: var(--cream);
 }
 
 /* ---- First page (name entry) ---- */

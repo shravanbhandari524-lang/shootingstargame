@@ -87,6 +87,7 @@ export function createEngine(canvas, callbacks) {
   // STATE
   // ---------------------------------------------------------------
   let running = false;
+  let paused = false;
   let rafId = null;
   let lastT = 0;
   let spawnTimer = 0;
@@ -424,6 +425,9 @@ export function createEngine(canvas, callbacks) {
     const dt = Math.min(50, t - lastT);
     lastT = t;
 
+    // Frozen frame while paused — the React pause overlay dims it.
+    if (paused) return;
+
     if (running) {
       spawnTimer += dt;
       const diff = difficultyFor(game.level);
@@ -434,6 +438,18 @@ export function createEngine(canvas, callbacks) {
     }
 
     drawScene(t);
+  }
+
+  // ---------------------------------------------------------------
+  // PAUSE / RESUME — freeze the whole sim; canvas keeps its last frame.
+  // ---------------------------------------------------------------
+  function pause() {
+    if (running) paused = true;
+  }
+
+  function resume() {
+    paused = false;
+    lastT = performance.now(); // avoid a giant dt jump after unpausing
   }
 
   // ---------------------------------------------------------------
@@ -452,6 +468,7 @@ export function createEngine(canvas, callbacks) {
     spawnTimer = 0;
     shake = 0;
     flashAlpha = 0;
+    paused = false;
     running = true;
     callbacks.onState(game);
     if (!rafId) {
@@ -466,6 +483,7 @@ export function createEngine(canvas, callbacks) {
     game.levelTarget = levelTargetFor(game.level);
     starCount = 0;
     spawnTimer = 0;
+    paused = false;
     running = true;
     callbacks.onState(game);
   }
@@ -476,7 +494,7 @@ export function createEngine(canvas, callbacks) {
     starCount = 0;
   }
   function tapAt(x, y) {
-    if (!running) return;
+    if (!running || paused) return;
     audio.resume();
 
     let best = -1;
@@ -521,6 +539,8 @@ export function createEngine(canvas, callbacks) {
     startAt,
     getLevel,
     nextLevel,
+    pause,
+    resume,
     tapAt,
     destroy,
     resetProgress,

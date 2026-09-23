@@ -14,35 +14,41 @@ export default function LevelPage({
   // itself is the "next up" level — shown dimmed/ghost until completed).
   const current = Math.min(Math.max(1, maxlevel), LEVELS_COUNT);
   const completedCount = current - 1;
+  const pct = Math.round((completedCount / LEVELS_COUNT) * 100);
 
   return (
-    <div className="overlay">
-      <div className="brand">
-        <GameLogo className="brand-logo" />
-      </div>
+    <div className="overlay home-page">
+      <GameLogo className="brand-logo home-logo" />
       <div className="lp-name">HI, {name.toUpperCase()}</div>
-      <h1 className="title">
-        LEVEL
-        <br />
-        {current}
-      </h1>
-      <div className="lp-progress">
-        {completedCount} / {LEVELS_COUNT} COMPLETED
+
+      <div className="home-level-card">
+        <div className="home-level-label">CURRENT LEVEL</div>
+        <div className="home-level-num">{current}</div>
+        <div className="home-track">
+          <div className="home-fill" style={{ width: pct + "%" }} />
+        </div>
+        <div className="lp-progress">
+          {completedCount} / {LEVELS_COUNT} COMPLETED
+        </div>
       </div>
+
       <div className="btn-stack">
         <button className="btn" onClick={() => onPlay(current)}>
           PLAY
         </button>
-        <button className="btn ghost" onClick={onLevels}>
-          LEVELS
-        </button>
-        <button className="btn ghost" onClick={onHowTo}>
-          HOW TO PLAY
-        </button>
-        <button className="btn ghost" onClick={onChangeName}>
-          CHANGE NAME
-        </button>
+        <div className="home-row">
+          <button className="btn ghost home-half" onClick={onLevels}>
+            LEVELS
+          </button>
+          <button className="btn ghost home-half" onClick={onHowTo}>
+            HOW TO PLAY
+          </button>
+        </div>
       </div>
+
+      <button className="link-btn" onClick={onChangeName}>
+        Change name
+      </button>
     </div>
   );
 }

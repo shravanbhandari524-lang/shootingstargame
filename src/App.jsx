@@ -11,6 +11,7 @@ import { LIVES_MAX, START_LEVEL } from "./game/config.js";
 import FirstPage from "./components/FIrstPage.jsx";
 import LevelPage from "./components/LevelPage.jsx";
 import LevelLayer from "./components/LevelLayer.jsx";
+import { PauseOverlay } from "./components/PauseOverlay.jsx";
 
 const INITIAL_HUD = {
   level: START_LEVEL,
@@ -71,6 +72,7 @@ function App() {
   // even if it's an older one they picked from the level layer).
   const playedLevelRef = useRef(START_LEVEL);
   const [combo, setCombo] = useState(null); // { text, color, key }
+  const [paused, setPaused] = useState(false);
   const comboTimer = useRef(null);
   const engineRef = useRef(null);
 
@@ -124,16 +126,41 @@ function App() {
     comboTimer.current = setTimeout(() => setCombo(null), 550);
   }, []);
 
-  const handleLevelComplete = useCallback(() => {
+  // Pause via the in-game settings button. Engine freezes; the frozen
+  // canvas stays visible behind the dimmed pause overlay.
+  const handlePause = () => {
+    engineRef.current?.pause();
+    setPaused(true);
+  };
+
+  const handleResume = useCallback(() => {
+    setPaused(false);
+    engineRef.current?.resume();
+  }, []);
+
+  // RESTART LEVEL from the pause menu: rerun the level being played.
+  const handlePauseRestart = () => {
+    setPaused(false);
+    const lv = playedLevelRef.current;
+    setHud(INITIAL_HUD);
+    engineRef.current?.startAt(lv);
+  };
+
+  const handlePauseHome = () => {
+    setPaused(false);
+    handleHome();
+  };
+
+  const handleLevelComplete = () => {
     // Persist progress with the max-guard (never lower than before).
     const engine = engineRef.current;
     if (engine?.getLevel) saveMaxLevel(engine.getLevel() + 1);
     setScreen("levelComplete");
-  }, []);
+  };
 
-  const handleGameOver = useCallback(() => {
+  const handleGameOver = () => {
     setScreen("gameOver");
-  }, []);
+  };
 
   const handleNextLevel = () => {
     engineRef.current?.nextLevel();
@@ -197,6 +224,27 @@ function App() {
         onGameOver={handleGameOver}
       />
       <Hud visible={screen === "playing"} {...hud} />
+      {screen === "playing" && !paused && (
+        <button
+          className="pause-btn"
+          onClick={handlePause}
+          aria-label="Pause game"
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M8 5h3v14H8zM13 5h3v14h-3z"
+            />
+          </svg>
+        </button>
+      )}
+      {paused && (
+        <PauseOverlay
+          onResume={handleResume}
+          onRestart={handlePauseRestart}
+          onHome={handlePauseHome}
+        />
+      )}
       {combo && (
         <div
           key={combo.key}
