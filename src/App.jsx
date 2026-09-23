@@ -224,11 +224,7 @@ function App() {
           onClose={() => setScreen("levelPage")}
         />
       )}
-      {screen === "firstpage" && (
-        <div style={{ position: "relative", zIndex: 9999 }}>
-          <FirstPage onSubmit={handleNameSubmit} />
-        </div>
-      )}
+      {screen === "firstpage" && <FirstPage onSubmit={handleNameSubmit} />}
       {screen === "howto" && (
         <HowToOverlay onBack={() => setScreen("levelPage")} />
       )}

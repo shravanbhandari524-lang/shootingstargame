@@ -1,4 +1,5 @@
 import { useState } from "react";
+import GameLogo from "./GameLogo.jsx";
 
 // Welcome/name page. Where it sends the player after submitting is decided
 // by App (first-timers go straight into the game, renames go home).
@@ -15,7 +16,7 @@ export default function FirstPage({ onSubmit }) {
   return (
     <div className="overlay first-page">
       <div className="brand">
-        <div className="brand-star">🌠</div>
+        <GameLogo className="brand-logo" />
       </div>
       <h1 className="title first-title">
         SHOOTING

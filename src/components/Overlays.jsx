@@ -30,8 +30,8 @@ export function HowToOverlay({ onBack }) {
         <div className="howto-step">
           <div className="step-num">4</div>
           <div className="step-text">
-            Reach the level target before you run out of lives. Every level gets
-            faster!
+            Reach the level target before you run out of lives. Every level
+            gets faster!
           </div>
         </div>
       </div>
@@ -68,19 +68,21 @@ export function LevelCompleteOverlay({
           <div className="l">BEST COMBO</div>
         </div>
       </div>
-      <button className="btn" onClick={onNext}>
-        NEXT LEVEL
-      </button>
-      {/* Offered when an older level was completed: jump back to the normal
-          progression. Hidden when it would be identical to NEXT LEVEL. */}
-      {continueLevel && continueLevel !== level + 1 && (
-        <button className="btn ghost" onClick={onContinue}>
-          continue · level {continueLevel}
+      <div className="btn-stack">
+        <button className="btn" onClick={onNext}>
+          NEXT LEVEL
         </button>
-      )}
-      <button className="btn ghost" onClick={onHome}>
-        go to home page
-      </button>
+        {/* Offered when an older level was completed: jump back to the normal
+            progression. Hidden when it would be identical to NEXT LEVEL. */}
+        {continueLevel != null && continueLevel !== level + 1 && (
+          <button className="btn ghost" onClick={onContinue}>
+            CONTINUE · LEVEL {continueLevel}
+          </button>
+        )}
+        <button className="btn ghost" onClick={onHome}>
+          HOME
+        </button>
+      </div>
     </div>
   );
 }
@@ -111,17 +113,19 @@ export function GameOverOverlay({
           <div className="l">BEST COMBO</div>
         </div>
       </div>
-      <button className="btn" onClick={onRetry}>
-        TRY AGAIN
-      </button>
-      {continueLevel && continueLevel !== level && (
-        <button className="btn ghost" onClick={onContinue}>
-          continue · level {continueLevel}
+      <div className="btn-stack">
+        <button className="btn" onClick={onRetry}>
+          TRY AGAIN
         </button>
-      )}
-      <button className="btn ghost" onClick={onHome}>
-        go to home page
-      </button>
+        {continueLevel != null && continueLevel !== level && (
+          <button className="btn ghost" onClick={onContinue}>
+            CONTINUE · LEVEL {continueLevel}
+          </button>
+        )}
+        <button className="btn ghost" onClick={onHome}>
+          HOME
+        </button>
+      </div>
     </div>
   );
 }

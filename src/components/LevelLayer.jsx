@@ -3,7 +3,7 @@
 // Security rule owned by App: replaying old levels can never lower progress.
 //   - completed (≤ maxlevel, beaten)  → gold, always playable
 //   - next up (=== maxlevel, unlocked but not beaten) → dimmed / ghost
-//   - beyond ( > maxlevel)             → locked 🔒
+//   - beyond ( > maxlevel)             → locked
 import { LEVELS_COUNT } from "../game/config.js";
 
 export default function LevelLayer({ maxlevel, onSelect, onClose }) {
@@ -41,7 +41,7 @@ export default function LevelLayer({ maxlevel, onSelect, onClose }) {
             >
               <span className="lv-num">{lv}</span>
               <span className="lv-tag">
-                {completed ? "✓" : ghost ? "🔒?" : "🔒"}
+                {completed ? "✓" : ghost ? "▶" : "🔒"}
               </span>
             </button>
           );
@@ -49,7 +49,7 @@ export default function LevelLayer({ maxlevel, onSelect, onClose }) {
       </div>
 
       <button className="btn ghost" onClick={onClose}>
-        back
+        BACK
       </button>
     </div>
   );

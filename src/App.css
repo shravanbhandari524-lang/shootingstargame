@@ -155,10 +155,28 @@
   align-items: center;
   margin-bottom: 6px;
 }
-.brand-star {
-  font-size: 15vw;
-  line-height: 1;
-  filter: drop-shadow(0 0 20px rgba(255, 215, 107, 0.7));
+.game-logo {
+  width: 108px;
+  height: 108px;
+  filter: drop-shadow(0 0 18px rgba(255, 215, 107, 0.45));
+}
+/* Subtle idle float so the brand feels alive on menus */
+.game-logo.brand-logo {
+  animation: logo-float 3.6s ease-in-out infinite;
+}
+@keyframes logo-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-logo.brand-logo {
+    animation: none;
+  }
 }
 .title {
   font-family: "Fredoka", sans-serif;
@@ -270,6 +288,11 @@
 }
 .btn-stack .btn.ghost {
   margin-top: 12px;
+}
+
+/* 4+ ghost buttons need tighter rhythm so stacks don't get too tall */
+.btn-stack .btn.ghost + .btn.ghost {
+  margin-top: 8px;
 }
 
 /* ---- First page (name entry) ---- */

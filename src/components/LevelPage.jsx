@@ -1,5 +1,6 @@
 // Home page: player name, level overview, play, all-levels layer, rename.
 import { LEVELS_COUNT } from "../game/config.js";
+import GameLogo from "./GameLogo.jsx";
 
 export default function LevelPage({
   onPlay,
@@ -17,7 +18,7 @@ export default function LevelPage({
   return (
     <div className="overlay">
       <div className="brand">
-        <div className="brand-star">🌠</div>
+        <GameLogo className="brand-logo" />
       </div>
       <div className="lp-name">HI, {name.toUpperCase()}</div>
       <h1 className="title">
@@ -28,18 +29,20 @@ export default function LevelPage({
       <div className="lp-progress">
         {completedCount} / {LEVELS_COUNT} COMPLETED
       </div>
-      <button className="btn" onClick={() => onPlay(current)}>
-        PLAY
-      </button>
-      <button className="btn ghost" onClick={onLevels}>
-        LEVELS
-      </button>
-      <button className="btn ghost" onClick={onHowTo}>
-        HOW TO PLAY
-      </button>
-      <button className="btn ghost" onClick={onChangeName}>
-        change name
-      </button>
+      <div className="btn-stack">
+        <button className="btn" onClick={() => onPlay(current)}>
+          PLAY
+        </button>
+        <button className="btn ghost" onClick={onLevels}>
+          LEVELS
+        </button>
+        <button className="btn ghost" onClick={onHowTo}>
+          HOW TO PLAY
+        </button>
+        <button className="btn ghost" onClick={onChangeName}>
+          CHANGE NAME
+        </button>
+      </div>
     </div>
   );
 }
