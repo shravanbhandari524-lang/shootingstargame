@@ -420,22 +420,36 @@
   white-space: nowrap;
 }
 .link-btn {
-  margin-top: 18px;
-  background: none;
-  border: none;
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.5px;
+  font-size: 12.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   color: var(--dim);
-  text-decoration: underline;
-  text-underline-offset: 3px;
   touch-action: manipulation;
-  transition: color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.12s ease;
 }
 .link-btn:active {
   color: var(--cream);
+  border-color: var(--lav);
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.96);
+}
+.link-btn:focus-visible {
+  outline: 2px solid var(--lav);
+  outline-offset: 2px;
 }
 
 /* ---- First page (name entry) ---- */
