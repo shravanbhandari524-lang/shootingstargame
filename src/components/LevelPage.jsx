@@ -1,4 +1,3 @@
-// Home page: player name, level overview, play, all-levels layer, rename.
 import { LEVELS_COUNT } from "../game/config.js";
 import GameLogo from "./GameLogo.jsx";
 
@@ -10,45 +9,38 @@ export default function LevelPage({
   maxlevel = 1,
 }) {
   const name = localStorage.getItem("name") || "PLAYER";
-  // Highest level the player has unlocked (beaten maxlevel-1, so maxlevel
-  // itself is the "next up" level — shown dimmed/ghost until completed).
   const current = Math.min(Math.max(1, maxlevel), LEVELS_COUNT);
   const completedCount = current - 1;
   const pct = Math.round((completedCount / LEVELS_COUNT) * 100);
 
   return (
     <div className="overlay home-page">
-      <GameLogo className="brand-logo home-logo" />
-      <div className="lp-name">HI, {name.toUpperCase()}</div>
-
-      <div className="home-level-card">
-        <div className="home-level-label">CURRENT LEVEL</div>
-        <div className="home-level-num">{current}</div>
-        <div className="home-track">
-          <div className="home-fill" style={{ width: pct + "%" }} />
+      <div className="glass-card">
+        <div className="brand">
+          <GameLogo className="brand-logo home-logo" />
         </div>
+        <div className="lp-name">WELCOME, {name.toUpperCase()}</div>
+        <h1 className="title">
+          LEVEL {current}
+        </h1>
         <div className="lp-progress">
-          {completedCount} / {LEVELS_COUNT} COMPLETED
+          {completedCount} / {LEVELS_COUNT} COMPLETED ({pct}%)
         </div>
-      </div>
-
-      <div className="btn-stack">
         <button className="btn" onClick={() => onPlay(current)}>
-          PLAY
+          PLAY NOW 🚀
         </button>
-        <div className="home-row">
-          <button className="btn ghost home-half" onClick={onLevels}>
-            LEVELS
+        <div className="btn-stack">
+          <button className="btn ghost" onClick={onLevels}>
+            ALL LEVELS 🎯
           </button>
-          <button className="btn ghost home-half" onClick={onHowTo}>
-            HOW TO PLAY
+          <button className="btn ghost" onClick={onHowTo}>
+            HOW TO PLAY 📖
+          </button>
+          <button className="btn ghost" onClick={onChangeName}>
+            CHANGE NAME ✏️
           </button>
         </div>
       </div>
-
-      <button className="link-btn" onClick={onChangeName}>
-        Change name
-      </button>
     </div>
   );
 }

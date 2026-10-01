@@ -1,73 +1,123 @@
+/* ==========================================
+   SHOOTING STAR BURST - ANDROID UI / UX ENGINE
+   ========================================== */
+
+/* --- HUD Header Bar --- */
 .hud {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 5;
+  z-index: 20;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: max(14px, env(safe-area-inset-top)) 16px 0 16px;
+  align-items: center;
+  padding-top: max(14px, env(safe-area-inset-top));
+  padding-bottom: 8px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  pointer-events: none;
 }
-.lives {
+
+/* Glass Pill Containers for HUD */
+.hud-pill {
   display: flex;
-  gap: 5px;
+  align-items: center;
+  background: rgba(12, 6, 32, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.lives {
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 30px;
 }
 .life-star {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.life-star.active {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 107, 0.85));
+  animation: star-pop 0.3s ease-out;
+}
+@keyframes star-pop {
+  0% { transform: scale(0.6); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
 .mid-box {
+  flex-direction: column;
+  padding: 6px 16px;
+  border-radius: 20px;
   text-align: center;
 }
 .level-label {
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--gold);
-  font-size: 13px;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 215, 107, 0.6);
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(255, 215, 107, 0.6);
 }
 .progress-wrap {
   margin-top: 4px;
-  width: 120px;
-  height: 8px;
-  border-radius: 5px;
+  width: 110px;
+  height: 7px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
 }
 .progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--gold), var(--mint));
-  transition: width 0.25s ease;
+  background: linear-gradient(90deg, var(--gold) 0%, #6bffcf 100%);
+  box-shadow: 0 0 10px rgba(107, 255, 207, 0.6);
+  border-radius: 10px;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .progress-txt {
   font-size: 10px;
-  color: var(--dim);
+  color: var(--cream);
+  opacity: 0.85;
   font-weight: 700;
-  margin-top: 3px;
+  margin-top: 2px;
   letter-spacing: 1px;
 }
+
 .score-box {
-  text-align: right;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 6px 14px;
+  border-radius: 20px;
 }
 .score-label {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 2px;
   color: var(--dim);
-  font-weight: 700;
+  font-weight: 800;
 }
 .score-val {
   font-family: "Fredoka", sans-serif;
-  font-size: 25px;
-  font-weight: 600;
-  color: var(--cream);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
   line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 215, 107, 0.5);
 }
 
-/* ---- In-game pause (settings) button — top-left, below the lives ---- */
+/* In-game pause button */
 .pause-btn {
   position: absolute;
   top: calc(max(14px, env(safe-area-inset-top)) + 34px);
@@ -96,20 +146,19 @@
   border-color: var(--lav);
 }
 
-/* ---- Pause overlay ---- */
+/* Pause overlay */
 .pause-overlay {
-  /* Dim the frozen game instead of hiding it — feels like a true pause */
   background: rgba(5, 4, 15, 0.72);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 .pause-title {
-  font-size: 14vw;
+  font-size: clamp(32px, 10vw, 54px);
 }
 .pause-count {
   font-family: "Fredoka", sans-serif;
   font-weight: 700;
-  font-size: 34vw;
+  font-size: clamp(48px, 20vw, 96px);
   line-height: 1;
   color: var(--gold);
   text-shadow: 0 0 60px rgba(255, 215, 107, 0.55);
@@ -129,45 +178,52 @@
   }
 }
 
+/* --- Combo Toast --- */
 .combo-msg {
   position: absolute;
-  top: 24%;
+  top: 22%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.5) rotate(-4deg);
+  transform: translate(-50%, -50%) scale(0.4) rotate(-3deg);
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
-  font-size: 10vw;
+  font-weight: 700;
+  font-size: clamp(32px, 10vw, 54px);
   opacity: 0;
   pointer-events: none;
-  z-index: 6;
+  z-index: 30;
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 0.2s ease-out;
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.18s ease-out;
+  letter-spacing: 1px;
 }
 .combo-msg.show {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1) rotate(-4deg);
+  transform: translate(-50%, -50%) scale(1) rotate(-3deg);
 }
 
+/* --- Overlay Container (Glass & Safe Area) --- */
 .overlay {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 24px;
-  padding-top: max(24px, env(safe-area-inset-top));
-  padding-bottom: max(24px, env(safe-area-inset-bottom));
-  background: radial-gradient(ellipse at 50% 20%, #241452 0%, #05040f 75%);
-  animation: overlay-in 0.35s ease-out both;
+  padding: max(20px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: radial-gradient(circle at 50% 18%, #28145e 0%, #12092c 60%, #05040f 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  animation: overlay-fade-in 0.35s ease-out both;
 }
-@keyframes overlay-in {
+
+@keyframes overlay-fade-in {
   from {
     opacity: 0;
-    transform: scale(1.04);
+    transform: scale(1.02);
   }
   to {
     opacity: 1;
@@ -175,26 +231,20 @@
   }
 }
 
-/* Staggered content entrance inside overlays */
+/* Staggered entrance for items */
 .overlay > * {
-  animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rise-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.overlay > *:nth-child(2) {
-  animation-delay: 0.06s;
-}
-.overlay > *:nth-child(3) {
-  animation-delay: 0.12s;
-}
-.overlay > *:nth-child(4) {
-  animation-delay: 0.18s;
-}
-.overlay > *:nth-child(5) {
-  animation-delay: 0.24s;
-}
-@keyframes rise-in {
+.overlay > *:nth-child(2) { animation-delay: 0.05s; }
+.overlay > *:nth-child(3) { animation-delay: 0.10s; }
+.overlay > *:nth-child(4) { animation-delay: 0.15s; }
+.overlay > *:nth-child(5) { animation-delay: 0.20s; }
+.overlay > *:nth-child(6) { animation-delay: 0.25s; }
+
+@keyframes rise-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -202,286 +252,218 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .overlay,
-  .overlay > * {
-    animation: none;
-  }
-}
 .overlay.hidden {
   display: none;
 }
+
+/* Glass Card Box wrapper inside overlays */
+.glass-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  margin: auto 0;
+}
+
+/* Branding & Titles */
 .brand {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .game-logo {
   width: 108px;
   height: 108px;
   filter: drop-shadow(0 0 18px rgba(255, 215, 107, 0.45));
 }
-/* Subtle idle float so the brand feels alive on menus */
 .game-logo.brand-logo {
   animation: logo-float 3.6s ease-in-out infinite;
 }
 @keyframes logo-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .game-logo.brand-logo {
-    animation: none;
-  }
+
+.brand-star {
+  font-size: clamp(48px, 14vw, 72px);
+  line-height: 1;
+  filter: drop-shadow(0 0 24px rgba(255, 215, 107, 0.8));
+  animation: float-star 3s ease-in-out infinite alternate;
 }
+@keyframes float-star {
+  0% { transform: translateY(0) rotate(-4deg); }
+  100% { transform: translateY(-8px) rotate(4deg); }
+}
+
 .title {
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
   line-height: 0.98;
-  font-size: 12.5vw;
-  background: linear-gradient(180deg, #fff7e8 10%, #ffd76b 60%, #c99a2e 100%);
+  font-size: clamp(34px, 10vw, 50px);
+  background: linear-gradient(180deg, #ffffff 0%, #ffeaa7 45%, #ffd76b 80%, #c99a2e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 40px rgba(255, 215, 107, 0.35);
+  text-shadow: 0 0 35px rgba(255, 215, 107, 0.4);
   letter-spacing: 1px;
 }
+
 .lp-name {
   color: var(--cream);
   font-weight: 700;
-  letter-spacing: 2px;
-  font-size: 14px;
-  margin-bottom: 6px;
+  letter-spacing: 3px;
+  font-size: 13px;
+  margin-bottom: 4px;
+  opacity: 0.9;
 }
 .lp-progress {
-  color: var(--dim);
+  color: var(--mint);
   font-weight: 700;
   letter-spacing: 2px;
-  font-size: 11px;
-  margin: 4px 0 22px 0;
+  font-size: 12px;
+  margin: 8px 0 20px 0;
+  background: rgba(107, 255, 176, 0.1);
+  border: 1px solid rgba(107, 255, 176, 0.25);
+  padding: 4px 14px;
+  border-radius: 20px;
 }
+
 .subtitle {
   color: var(--dim);
-  font-weight: 700;
-  letter-spacing: 3px;
-  font-size: 12px;
-  margin: 10px 0 32px 0;
-  max-width: 320px;
-}
-.subtitle-name {
-  display: block;
-  margin-top: 6px;
+  font-weight: 600;
   letter-spacing: 2px;
-  color: var(--gold);
-  font-size: 11px;
+  font-size: 12px;
+  margin: 8px 0 24px 0;
+  max-width: 300px;
+  line-height: 1.4;
 }
-.subtitle-name b {
-  color: var(--cream);
-}
+
+/* --- Action Buttons (Android Mobile Ergonomics: 48px+ touch height) --- */
 .btn {
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: #241000;
-  background: linear-gradient(180deg, #ffe9a8, var(--gold));
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  color: #1e0e00;
+  background: linear-gradient(180deg, #fff3c4 0%, #ffd76b 50%, #e6a817 100%);
   border: none;
   border-radius: 16px;
-  padding: 16px 46px;
+  min-height: 52px;
+  padding: 14px 36px;
   cursor: pointer;
   touch-action: manipulation;
   transition:
-    transform 0.12s ease,
+    transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.12s ease,
     filter 0.15s ease;
   box-shadow:
-    0 0 0 3px rgba(255, 215, 107, 0.15),
-    0 6px 0 var(--gold-dk),
-    0 14px 26px rgba(255, 215, 107, 0.3);
+    0 0 0 3px rgba(255, 215, 107, 0.2),
+    0 5px 0 #9e700a,
+    0 10px 24px rgba(255, 215, 107, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
 }
+
 .btn:active {
-  transform: translateY(4px);
+  transform: translateY(3px) scale(0.98);
   box-shadow:
-    0 0 0 3px rgba(255, 215, 107, 0.1),
-    0 2px 0 var(--gold-dk),
-    0 6px 14px rgba(255, 215, 107, 0.2);
+    0 0 0 2px rgba(255, 215, 107, 0.15),
+    0 2px 0 #9e700a,
+    0 4px 12px rgba(255, 215, 107, 0.25);
 }
+
 .btn:disabled {
-  filter: grayscale(0.5) brightness(0.7);
+  filter: grayscale(0.6) opacity(0.6);
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
+
 .btn.ghost {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--cream);
   box-shadow: none;
-  border: 2px solid #3a2f66;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   font-size: 14px;
-  padding: 10px 26px;
+  min-height: 48px;
+  padding: 10px 24px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition:
     border-color 0.2s ease,
     background 0.2s ease,
     transform 0.12s ease;
 }
+
 .btn.ghost:active {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--lav);
   transform: scale(0.97);
 }
+
 .btn-stack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   width: 100%;
   max-width: 300px;
-}
-.btn-stack .btn {
-  width: 100%;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-.btn-stack .btn.ghost {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
-/* 4+ ghost buttons need tighter rhythm so stacks don't get too tall */
 .btn-stack .btn.ghost + .btn.ghost {
   margin-top: 8px;
 }
 
-/* ---- Home page redesign ---- */
-.home-page {
-  justify-content: center;
-  gap: 0;
-}
-.home-logo {
-  width: 88px;
-  height: 88px;
-  margin-bottom: 2px;
-}
-.home-level-card {
-  width: 100%;
-  max-width: 300px;
-  margin: 14px 0 22px 0;
-  padding: 16px 18px 14px 18px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
-}
-.home-level-label {
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  font-weight: 700;
-  color: var(--dim);
-}
-.home-level-num {
-  font-family: "Fredoka", sans-serif;
-  font-weight: 700;
-  font-size: 54px;
-  line-height: 1.05;
-  background: linear-gradient(180deg, #fff7e8 10%, #ffd76b 60%, #c99a2e 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 22px rgba(255, 215, 107, 0.25));
-}
-.home-track {
-  height: 8px;
-  margin: 10px 0 8px 0;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.09);
-  overflow: hidden;
-}
-.home-fill {
-  height: 100%;
-  border-radius: 5px;
-  background: linear-gradient(90deg, var(--gold), var(--mint));
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.home-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  margin-top: 12px;
-}
-.home-half {
-  flex: 1;
-  margin-top: 0 !important;
-  padding: 12px 8px;
-  font-size: 13px;
-  white-space: nowrap;
-}
-.link-btn {
-  margin-top: 20px;
-  padding: 10px 24px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-size: 12.5px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--dim);
-  touch-action: manipulation;
-  transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    transform 0.12s ease;
-}
-.link-btn:active {
-  color: var(--cream);
-  border-color: var(--lav);
-  background: rgba(255, 255, 255, 0.08);
-  transform: scale(0.96);
-}
-.link-btn:focus-visible {
-  outline: 2px solid var(--lav);
-  outline-offset: 2px;
+/* --- First Page (Player Name Input) --- */
+.first-page .first-title {
+  font-size: clamp(32px, 9vw, 44px);
 }
 
-/* ---- First page (name entry) ---- */
-.first-page .first-title {
-  font-size: 11.5vw;
-}
 .name-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   width: 100%;
   max-width: 300px;
+  margin-top: 10px;
 }
+
 .name-input {
   width: 100%;
+  min-height: 52px;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
-  font-size: 16px; /* 16px prevents iOS zoom-on-focus */
+  font-size: 16px;
   color: var(--cream);
   text-align: center;
-  letter-spacing: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 2px solid #3a2f66;
-  border-radius: 14px;
-  padding: 14px 18px;
+  letter-spacing: 1.5px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 12px 18px;
   outline: none;
   caret-color: var(--gold);
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
 .name-input::placeholder {
   color: var(--dim);
@@ -489,22 +471,22 @@
 }
 .name-input:focus {
   border-color: var(--gold);
-  background: rgba(255, 215, 107, 0.07);
-  box-shadow: 0 0 0 4px rgba(255, 215, 107, 0.15);
+  background: rgba(255, 215, 107, 0.08);
+  box-shadow: 0 0 20px rgba(255, 215, 107, 0.3), inset 0 0 10px rgba(255, 215, 107, 0.1);
 }
 
-/* ---- How to play steps ---- */
+/* --- How To Play Overlay --- */
 .howto-title {
-  font-size: 9.5vw;
-  margin-bottom: 8px;
+  font-size: clamp(30px, 8vw, 40px);
+  margin-bottom: 4px;
 }
 .howto-steps {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  max-width: 330px;
-  margin: 14px 0 30px 0;
+  max-width: 340px;
+  margin: 12px 0 24px 0;
 }
 .howto-step {
   display: flex;
@@ -512,58 +494,89 @@
   gap: 14px;
   text-align: left;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px 16px;
 }
 .step-num {
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
   color: var(--ink);
-  background: linear-gradient(180deg, #ffe9a8, var(--gold));
+  background: linear-gradient(135deg, #ffd76b, #f5a623);
   border-radius: 50%;
-  box-shadow: 0 3px 0 var(--gold-dk);
+  box-shadow: 0 3px 0 #9e700a, 0 0 10px rgba(255, 215, 107, 0.4);
 }
 .step-text {
   color: var(--cream);
-  font-size: 13.5px;
-  line-height: 1.5;
-  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 500;
 }
+
+/* --- Stats Highlight Grid (End Game Screens) --- */
 .stat-row {
   display: flex;
-  gap: 30px;
-  margin: 18px 0 28px 0;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0 24px 0;
+  width: 100%;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 12px 16px;
+  min-width: 84px;
 }
 .stat .n {
   font-family: "Fredoka", sans-serif;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 215, 107, 0.4);
 }
 .stat .l {
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
   color: var(--dim);
   font-weight: 700;
+  margin-top: 4px;
 }
+
 .go-title {
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--pink);
-  font-size: 12.5vw;
+  font-size: clamp(34px, 9vw, 46px);
   margin: 0;
-  text-shadow: 0 0 30px rgba(255, 107, 207, 0.5);
+  text-shadow: 0 0 30px rgba(255, 107, 207, 0.6);
 }
-/* ---- Level layer (all levels list) ---- */
+
+.lc-title {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: clamp(34px, 9vw, 46px);
+  margin: 0;
+  background: linear-gradient(180deg, #ffffff 0%, var(--mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(107, 255, 176, 0.5);
+}
+
+/* --- Level Grid Layer Overlay --- */
 .level-layer .layer-title {
-  font-size: 9.5vw;
+  font-size: clamp(32px, 8vw, 42px);
   margin-bottom: 0;
 }
 .level-grid {
@@ -572,22 +585,23 @@
   gap: 10px;
   width: 100%;
   max-width: 340px;
-  margin: 8px 0 28px 0;
+  margin: 12px 0 24px 0;
 }
 .lv-cell {
   position: relative;
   aspect-ratio: 1;
+  min-height: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
   font-family: "Fredoka", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--cream);
   background: rgba(255, 255, 255, 0.05);
-  border: 2px solid #3a2f66;
-  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
   cursor: pointer;
   touch-action: manipulation;
   transition:
@@ -597,7 +611,7 @@
     box-shadow 0.2s ease;
 }
 .lv-cell:active {
-  transform: scale(0.94);
+  transform: scale(0.93);
 }
 .lv-num {
   font-size: 20px;
@@ -606,44 +620,29 @@
 .lv-tag {
   font-size: 10px;
   letter-spacing: 1px;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* Completed: gold + check */
+/* Completed Level */
 .lv-cell.done {
   color: var(--gold);
-  border-color: rgba(255, 215, 107, 0.55);
-  background: rgba(255, 215, 107, 0.08);
-  box-shadow: 0 0 14px rgba(255, 215, 107, 0.15);
+  border-color: rgba(255, 215, 107, 0.65);
+  background: rgba(255, 215, 107, 0.12);
+  box-shadow: 0 0 14px rgba(255, 215, 107, 0.2);
 }
 
-/* Next up / unlocked-but-not-completed: dimmed ghost look */
+/* Unlocked Next Level (Ghost) */
 .lv-cell.ghost {
-  opacity: 0.45;
-  border-style: dashed;
-}
-.lv-cell.ghost:hover {
-  opacity: 0.8;
+  color: var(--mint);
+  border-color: rgba(107, 255, 176, 0.55);
+  background: rgba(107, 255, 176, 0.08);
+  box-shadow: 0 0 12px rgba(107, 255, 176, 0.15);
 }
 
-/* Locked */
+/* Locked Level */
 .lv-cell.locked {
-  opacity: 0.25;
+  opacity: 0.3;
   cursor: not-allowed;
   border-style: solid;
-}
-.lv-cell.locked .lv-num {
-  filter: grayscale(1);
-}
-
-.lc-title {
-  font-family: "Fredoka", sans-serif;
-  font-weight: 600;
-  font-size: 11.5vw;
-  margin: 0;
-  background: linear-gradient(180deg, #fff, var(--mint));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 30px rgba(107, 255, 176, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
 }
