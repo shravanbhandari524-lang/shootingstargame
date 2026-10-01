@@ -2,77 +2,100 @@
    SHOOTING STAR BURST - ANDROID UI / UX ENGINE
    ========================================== */
 
-/* --- HUD Header Bar --- */
+/* --- HUD Header Bar (In-Game Top Bar) --- */
 .hud {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 25;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: max(14px, env(safe-area-inset-top));
-  padding-bottom: 8px;
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
+  gap: 6px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-bottom: 6px;
+  padding-left: max(10px, env(safe-area-inset-left));
+  padding-right: max(10px, env(safe-area-inset-right));
   pointer-events: none;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 /* Glass Pill Containers for HUD */
 .hud-pill {
   display: flex;
   align-items: center;
-  background: rgba(12, 6, 32, 0.75);
+  background: rgba(12, 6, 32, 0.78);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   pointer-events: auto;
+  border-radius: 20px;
+}
+
+.pause-btn-pill {
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  color: var(--cream);
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.pause-btn-pill:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--gold);
 }
 
 .lives {
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 30px;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 20px;
 }
 .life-star {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .life-star.active {
-  filter: drop-shadow(0 0 8px rgba(255, 215, 107, 0.85));
-  animation: star-pop 0.3s ease-out;
-}
-@keyframes star-pop {
-  0% { transform: scale(0.6); }
-  50% { transform: scale(1.25); }
-  100% { transform: scale(1); }
+  filter: drop-shadow(0 0 6px rgba(255, 215, 107, 0.85));
 }
 
 .mid-box {
   flex-direction: column;
-  padding: 6px 16px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 18px;
   text-align: center;
+  min-width: 84px;
+  flex-shrink: 1;
 }
 .level-label {
   font-family: "Fredoka", sans-serif;
   font-weight: 700;
   color: var(--gold);
-  font-size: 12px;
-  letter-spacing: 2.5px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  text-shadow: 0 0 12px rgba(255, 215, 107, 0.6);
+  text-shadow: 0 0 10px rgba(255, 215, 107, 0.6);
+  white-space: nowrap;
 }
 .progress-wrap {
-  margin-top: 4px;
-  width: 110px;
-  height: 7px;
+  margin-top: 3px;
+  width: 76px;
+  max-width: 100%;
+  height: 6px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
@@ -83,91 +106,65 @@
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--gold) 0%, #6bffcf 100%);
-  box-shadow: 0 0 10px rgba(107, 255, 207, 0.6);
+  box-shadow: 0 0 8px rgba(107, 255, 207, 0.6);
   border-radius: 10px;
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .progress-txt {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--cream);
   opacity: 0.85;
   font-weight: 700;
-  margin-top: 2px;
-  letter-spacing: 1px;
+  margin-top: 1px;
+  letter-spacing: 0.5px;
 }
 
 .score-box {
   flex-direction: column;
   align-items: flex-end;
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 18px;
+  min-width: 60px;
+  flex-shrink: 0;
 }
 .score-label {
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 8px;
+  letter-spacing: 1.5px;
   color: var(--dim);
   font-weight: 800;
 }
 .score-val {
   font-family: "Fredoka", sans-serif;
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--gold);
   line-height: 1;
   text-shadow: 0 0 10px rgba(255, 215, 107, 0.5);
 }
 
-/* In-game pause button */
-.pause-btn {
-  position: absolute;
-  top: calc(max(14px, env(safe-area-inset-top)) + 34px);
-  left: 14px;
-  z-index: 6;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  color: var(--cream);
-  background: rgba(255, 255, 255, 0.07);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  border-radius: 13px;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  touch-action: manipulation;
-  transition:
-    transform 0.12s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
-}
-.pause-btn:active {
-  transform: scale(0.92);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--lav);
-}
-
-/* Pause overlay */
+/* In-game Pause Overlay */
 .pause-overlay {
-  background: rgba(5, 4, 15, 0.72);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(5, 4, 15, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 60;
 }
 .pause-title {
-  font-size: clamp(32px, 10vw, 54px);
+  font-size: clamp(32px, 9vw, 48px);
 }
 .pause-count {
   font-family: "Fredoka", sans-serif;
   font-weight: 700;
-  font-size: clamp(48px, 20vw, 96px);
+  font-size: clamp(48px, 18vw, 84px);
   line-height: 1;
   color: var(--gold);
-  text-shadow: 0 0 60px rgba(255, 215, 107, 0.55);
-  animation: count-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  text-shadow: 0 0 50px rgba(255, 215, 107, 0.6);
+  animation: count-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @keyframes count-pop {
   0% {
     opacity: 0;
-    transform: scale(1.7);
+    transform: scale(1.6);
   }
   35% {
     opacity: 1;
@@ -186,7 +183,7 @@
   transform: translate(-50%, -50%) scale(0.4) rotate(-3deg);
   font-family: "Fredoka", sans-serif;
   font-weight: 700;
-  font-size: clamp(32px, 10vw, 54px);
+  font-size: clamp(28px, 9vw, 48px);
   opacity: 0;
   pointer-events: none;
   z-index: 30;

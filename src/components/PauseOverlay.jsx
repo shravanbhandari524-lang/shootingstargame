@@ -19,21 +19,21 @@ export function PauseOverlay({ onResume, onRestart, onHome }) {
   return (
     <div className="overlay pause-overlay">
       {count == null ? (
-        <>
+        <div className="glass-card">
           <h1 className="title pause-title">PAUSED</h1>
           <div className="subtitle">THE STARS WILL WAIT FOR YOU</div>
           <div className="btn-stack">
             <button className="btn" onClick={() => setCount(3)}>
-              RESUME
+              RESUME ⏯️
             </button>
             <button className="btn ghost" onClick={onRestart}>
-              RESTART LEVEL
+              RESTART LEVEL 🔄
             </button>
             <button className="btn ghost" onClick={onHome}>
-              HOME
+              HOME PAGE 🏠
             </button>
           </div>
-        </>
+        </div>
       ) : (
         <div className="pause-count" key={count}>
           {count}

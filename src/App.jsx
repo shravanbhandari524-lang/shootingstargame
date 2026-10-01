@@ -223,21 +223,7 @@ function App() {
         onLevelComplete={handleLevelComplete}
         onGameOver={handleGameOver}
       />
-      <Hud visible={screen === "playing"} {...hud} />
-      {screen === "playing" && !paused && (
-        <button
-          className="pause-btn"
-          onClick={handlePause}
-          aria-label="Pause game"
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M8 5h3v14H8zM13 5h3v14h-3z"
-            />
-          </svg>
-        </button>
-      )}
+      <Hud visible={screen === "playing"} onPause={handlePause} {...hud} />
       {paused && (
         <PauseOverlay
           onResume={handleResume}
